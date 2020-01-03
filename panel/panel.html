@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="app.css" />
+</head>
+<body>
+<h3 class="no-mojito-msg">Mojito isn't running in current tab.</h3>
+<div class="container">
+    <header>
+        <div class="header">
+            <div class="info">
+                <h4>Mojito Inspector</h4>
+                <div>
+                    Staging: <span id="stagingCnt"></span>
+                    Live: <span id="liveCnt"></span>
+                    Divert: <span id="divertCnt"></span>
+                </div>
+            </div>
+            <div class="links">
+                <div>
+                    <a href="https://mojito.mx" target="_blank">Mojito docs</a>
+                </div>
+                <div>
+                    <a href="https://github.com/mint-metrics/mojito" target="_blank">Github</a>
+                </div>
+            </div>
+        </div>
+        <div class="grid-header">
+            <div class="col col-id" data-col-name="id">
+                <div class="label">ID</div>
+                <div class="sort-arrow"></div>
+            </div>
+            <div class="col col-state" data-col-name="state">
+                <div class="label">State</div>
+                <div class="sort-arrow"></div>
+            </div>
+            <div class="col-setting">
+                <div class="label">Setting</div>
+                <div class="refresh-icon">
+                    <span class="no-changes">No changes</span>
+                    <span class="has-changes">Refresh page to apply changes</span>
+                </div>
+            </div>
+        </div>
+    </header>
+    <div id="bodyContainer" class="body"></div>
+    <footer>
+        <input id="txtFilter">
+        <label>
+            <input id="cbxHideNA" type="checkbox">
+            <span>Hide N/A</span>
+        </label>
+    </footer>
+</div>
+<script src="app.js"></script>
+<script src="panel.js"></script>
+</body>
+</html>

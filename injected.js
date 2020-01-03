@@ -22,7 +22,6 @@ function _mojitoDetect(forPanel, devtoolsOnly)
 	if (window._mojitoDetectCnt > window._mojitoMaxDetectCnt) {
 		// notify inspector panel, No Mojito found
 		_mojitoSendMessageToPanel({mojitoDetected: false});
-		console.log('detector exit.');
 		return;
 	}
 
@@ -96,7 +95,6 @@ function _mojitoGetTestData()
 const TEST_STATES = {STAGING: 'staging', LIVE: 'live', DIVERT: 'divert'};
 function _mojitoApplyChanges(changes)
 {
-	console.log(changes);
 	let changeItem,
 		params = Mojito.utils.parseUrlParameters(window.location.search),
 		test;

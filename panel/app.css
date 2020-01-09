@@ -7,6 +7,11 @@ html, body
     color: #333;
 }
 
+body
+{
+    background-color: #fff;
+}
+
 a
 {
     color: #337ab7;

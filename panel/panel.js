@@ -9,7 +9,6 @@ backgroundPageConnection.postMessage({
     tabId: chrome.devtools.inspectedWindow.tabId
 });
 
-let testCnt = 0;
 backgroundPageConnection.onMessage.addListener(function (message) {
     if ('mojitoDetected' in message.payload && !message.payload.devtoolsOnly)
     {

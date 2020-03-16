@@ -30,18 +30,21 @@ function _mojitoDetect(forPanel, devtoolsOnly)
 		{
 			if (devtoolsOnly)
 			{
-				Mojito.utils.domReady(()=> _mojitoSendMessageToPanel({mojitoDetected: true, devtoolsOnly: true}));
+				Mojito.utils.domReady(()=> _mojitoSendMessageToPanel({mojitoDetected: true, devtoolsOnly: true, count: getActivatedCount()}));
 				
 			}
 			else
 			{
-				Mojito.utils.domReady(()=> _mojitoSendMessageToPanel({mojitoDetected: true}))
+				Mojito.utils.domReady(()=> _mojitoSendMessageToPanel({mojitoDetected: true, count: getActivatedCount()}))
 			}
 		}
 		else
 		{
 			// change extension icon to enable state
 			_mojitoSendMessageToBackground({mojitoDetected: true});
+			setTimeout(() => {
+				_mojitoSendMessageToBackground({mojitoDetected: true, count: getActivatedCount()});
+			}, 500);
 		}
 	}
 	else {
@@ -50,6 +53,22 @@ function _mojitoDetect(forPanel, devtoolsOnly)
 			_mojitoDetect();
 		}, 500);
 	}
+}
+
+function getActivatedCount()
+{
+	let tests = Mojito.testObjects||{},
+		activatedCount = 0;
+
+	for (let key in tests)
+	{
+		if (tests[key].activated)
+		{
+			activatedCount++;
+		}
+	}
+
+	return activatedCount;
 }
 
 function _mojitoGetTestData()

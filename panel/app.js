@@ -1,10 +1,13 @@
 'use strict';
-const SELECT_HEIGHT = 30;
+const SELECT_HEIGHT = 23;
 const ITEM_HEIGHT = 28;
 const TEST_STATES = {STAGING: 'staging', LIVE: 'live', DIVERT: 'divert'};
 
+document.documentElement.classList.add(chrome.devtools.panels.themeName);
+
 let bodyContainer = document.getElementById('bodyContainer'),
-    rootContainer = document.querySelector('.container');
+    rootContainer = document.querySelector('.container'),
+    gridHeader = document.querySelector('.grid-header')
 let renderedTests = [];
 let filterTimeoutHandle;
 
@@ -24,10 +27,10 @@ function closeAllSelects()
 
 function showOptions(target)
 {
-    let totalHeight = SELECT_HEIGHT + ITEM_HEIGHT*(parseInt(target.getAttribute('data-item-cnt'), 10));
+    let totalHeight = SELECT_HEIGHT + ITEM_HEIGHT*(target.querySelectorAll('.options .option-item').length);
     let offsetTop = target.offsetTop + target.parentNode.offsetTop;
 
-    if ((offsetTop + totalHeight) > (window.innerHeight + window.pageYOffset))
+    if ((offsetTop + totalHeight) > (window.innerHeight + bodyContainer.scrollTop))
     {
         target.classList.add('up');
     }
@@ -121,12 +124,8 @@ function renderTests(testData)
         doTxtFilter();
     }
 
-    if (document.getElementById('cbxHideNA').checked)
-    {
-        doNAFilter();
-    }
-
     rootContainer.classList.remove('changed', 'refreshing');
+    checkBodyOverflow();
 }
 
 function createTestItem(test, params)
@@ -155,23 +154,30 @@ function createTestItem(test, params)
     testItem.innerHTML = 
     `
     <div class="summary">
+        <div class="col-name">
+            <div class="label">${test.name}</div>
+        </div>
         <div class="col-id">
-            <div class="down-arrow"></div>
             <div class="label">${test.id}</div>
         </div>
         <div class="col-state">
-            <div class="label"><span>${test.state}</span> ${stateDescr}</div>
+            <div class="label"><span class="indicator"></span><span>${test.state}</span> ${stateDescr}</div>
         </div>
         <div class="col-setting"></div>
     </div>
     <div class="details">
         <div class="details-holder">
-            <div>Experiment name: <span>${test.name}</span></div>
             <div>Sample rate: <span>${test.sampleRate}</span></div>
-            <div>Recipes:</div>
         </div>
     </div>
     `;
+
+    if (test.gaExperimentId)
+    {
+        let gaNode = document.createElement('div');
+        gaNode.innerHTML = `gaExperimentId: <span>${test.sampleRate}</span>`;
+        testItem.querySelector('.details-holder').appendChild(gaNode);
+    }
 
     let {dropdown, recipesNode} = createRecipeList(test);
     testItem.querySelector('.col-setting').appendChild(dropdown);
@@ -215,7 +221,7 @@ function createRecipeList(test)
                     <span class="checkmark">✓</span>${test.chosenRecipe.name}
                     <span class="pin-icon"></span>
                 </div>
-                <div class="arrow down-arrow"></div>
+                <div class="arrow"></div>
                 `;
             }
             else
@@ -224,7 +230,7 @@ function createRecipeList(test)
                 <div class="selected-option">
                     <span class="checkmark">✓</span>${test.chosenRecipe.name}
                 </div>
-                <div class="arrow down-arrow"></div>
+                <div class="arrow"></div>
                 `;
             }
     
@@ -291,7 +297,7 @@ function createRecipeList(test)
         {
             input.innerHTML = `
             <div class="selected-option">- Select recipe -</div>
-            <div class="arrow down-arrow"></div>
+            <div class="arrow"></div>
             `;
     
             for (let i=0;i<recipes.length;i++)
@@ -328,7 +334,7 @@ function createRecipeList(test)
     else
     {
         dropdown = document.createElement('span');
-        dropdown.innerHTML = 'N/A - Trigger not activated';
+        dropdown.innerHTML = 'Trigger not activated';
         test._na = true;
     }
     
@@ -393,6 +399,19 @@ function sortTestItems(colName)
         lastItemNode.insertAdjacentElement('afterend', renderedTests[i].itemNode);
         lastItemNode = renderedTests[i].itemNode;
     }
+
+    gridHeader.querySelectorAll('.asc, .desc').forEach((item) => {
+        item.classList.remove('asc', 'desc');
+    });
+
+    if (sortState[colName] == 'desc')
+    {
+        gridHeader.querySelector('.col-' + colName).classList.add('desc');
+    }
+    else
+    {
+        gridHeader.querySelector('.col-' + colName).classList.add('asc');
+    }
 }
 
 function doTxtFilter()
@@ -421,6 +440,8 @@ function doTxtFilter()
             testItem.itemNode.classList.remove('hidden');
         }
     }
+
+    checkBodyOverflow();
 }
 
 function doNAFilter()
@@ -448,6 +469,8 @@ function doNAFilter()
             testItem.itemNode.classList.remove('hidden');
         }
     }
+
+    checkBodyOverflow();
 }
 
 function applyChanges()
@@ -490,74 +513,91 @@ function applyChanges()
     chrome.devtools.inspectedWindow.eval('_mojitoApplyChanges('+JSON.stringify(changes)+')');
 }
 
+function checkBodyOverflow()
+{
+    if (bodyContainer.clientHeight < bodyContainer.scrollHeight)
+    {
+        document.body.classList.add('overflow');
+    }
+    else
+    {
+        document.body.classList.remove('overflow');
+    }
+}
+
 bodyContainer.addEventListener('click', e =>
 {
     let target = e.target;
-
-    if (target.classList.contains('down-arrow') && target.parentNode.classList.contains('col-id'))
+    while (!(target.classList.contains('input')||target.classList.contains('option-item'))&&target != bodyContainer)
     {
-        target = target.parentNode.parentNode.parentNode;
-        target.classList.toggle('expanded');
+        target = target.parentNode;
     }
-    else 
+
+    if (target.classList.contains('input') || target.classList.contains('option-item'))
     {
-        while (!(target.classList.contains('input')||target.classList.contains('option-item'))&&target != bodyContainer)
+        let selectWidget = target;
+        while (!selectWidget.classList.contains('select-holder'))
+        {
+            selectWidget = selectWidget.parentNode;
+        }
+
+        if (target.classList.contains('input'))
+        {
+            e.stopPropagation();
+
+            if (selectWidget.classList.contains('open'))
+            {
+                selectWidget.classList.remove('open');
+            }
+            else
+            {
+                closeAllSelects();
+                showOptions(selectWidget);
+            }
+        }
+        else
+        {
+            let currentVal = selectWidget.getAttribute('data-value'),
+                optionVal = target.getAttribute('data-value');
+
+            if (currentVal != optionVal)
+            {
+                let testItem = selectWidget.parentNode.parentNode.parentNode;
+                selectWidget.querySelector('.input .selected-option').innerHTML = target.innerHTML;
+                selectWidget.setAttribute('data-value', optionVal);
+
+                if (selectWidget.getAttribute('data-init-value') != optionVal)
+                {
+                    testItem.classList.add('changed');
+                }
+                else
+                {
+                    testItem.classList.remove('changed');
+                }
+
+                if (bodyContainer.querySelectorAll('.test-item.changed').length)
+                {
+                    rootContainer.classList.add('changed');
+                }
+                else
+                {
+                    rootContainer.classList.remove('changed');
+                }
+            }
+        }
+    }
+    else
+    {
+        target = e.target;
+        while (!(target.classList.contains('col-name'))&&target != bodyContainer)
         {
             target = target.parentNode;
         }
 
-        if (target.classList.contains('input') || target.classList.contains('option-item'))
+        if (target.classList.contains('col-name'))
         {
-            let selectWidget = target;
-            while (!selectWidget.classList.contains('select-holder'))
-            {
-                selectWidget = selectWidget.parentNode;
-            }
-
-            if (target.classList.contains('input'))
-            {
-                e.stopPropagation();
-
-                if (selectWidget.classList.contains('open'))
-                {
-                    selectWidget.classList.remove('open');
-                }
-                else
-                {
-                    closeAllSelects();
-                    showOptions(selectWidget);
-                }
-            }
-            else
-            {
-                let currentVal = selectWidget.getAttribute('data-value'),
-                    optionVal = target.getAttribute('data-value');
-
-                if (currentVal != optionVal)
-                {
-                    let testItem = selectWidget.parentNode.parentNode.parentNode;
-                    selectWidget.querySelector('.input .selected-option').innerHTML = target.innerHTML;
-                    selectWidget.setAttribute('data-value', optionVal);
-
-                    if (selectWidget.getAttribute('data-init-value') != optionVal)
-                    {
-                        testItem.classList.add('changed');
-                    }
-                    else
-                    {
-                        testItem.classList.remove('changed');
-                    }
-
-                    if (bodyContainer.querySelectorAll('.test-item.changed').length)
-                    {
-                        rootContainer.classList.add('changed');
-                    }
-                    else
-                    {
-                        rootContainer.classList.remove('changed');
-                    }
-                }
-            }
+            target.parentNode.parentNode.classList.toggle('expanded');
+            window.setTimeout(checkBodyOverflow, 500);
         }
     }
 });
@@ -582,9 +622,26 @@ document.getElementById('txtFilter').addEventListener('input', () => {
     }
 
     filterTimeoutHandle = window.setTimeout(doTxtFilter, 500);
+    if (document.getElementById('txtFilter').value.trim().length > 0)
+    {
+        document.getElementById('clearFilter').classList.add('enabled');
+    }
+    else
+    {
+        document.getElementById('clearFilter').classList.remove('enabled');
+    }
 });
 
-document.getElementById('cbxHideNA').addEventListener('change', doNAFilter);
+document.getElementById('clearFilter').addEventListener('click', () => {
+    if (filterTimeoutHandle)
+    {
+        window.clearTimeout(filterTimeoutHandle);
+    }
+
+    document.getElementById('txtFilter').value = '';
+    doTxtFilter();
+    document.getElementById('clearFilter').classList.remove('enabled');
+});
 
 // apply changes
 document.querySelector('.grid-header .refresh-icon').addEventListener('click', applyChanges);
@@ -598,3 +655,5 @@ document.addEventListener('click', () =>
         openSelect.classList.remove('open');
     }
 });
+
+window.addEventListener('resize', checkBodyOverflow);

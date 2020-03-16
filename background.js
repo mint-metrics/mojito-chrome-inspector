@@ -6,10 +6,10 @@ chrome.runtime.onConnect.addListener(function (port) {
     var extensionListener = function (message) {
         // The original connection event doesn't include the tab ID of the
         // DevTools page, so we need to send it explicitly.
-        if (message.name == "init") {
+        if (message.name == 'init') {
           connections[message.tabId] = port;
           return;
-        }
+		}
     }
 
     // Listen to messages sent from the DevTools page
@@ -38,14 +38,21 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse)
 		if (request.payload && request.payload.mojitoDetected) {
 			// change extension icon to enable state
 			chrome.browserAction.setIcon({
-				tabId: sender.tab.id,
-				path: "images/logo.png"
+				tabId: tabId,
+				path: 'images/logo.png'
 			});
 
 			chrome.browserAction.setPopup({
-				tabId: sender.tab.id,
+				tabId: tabId,
 				popup: 'popups/popup.html'
 			});
+
+			if ('count' in request.payload)
+			{
+				// update count of activated experiments on the page
+				chrome.browserAction.setBadgeText({text: String(request.payload.count), tabId: tabId});
+				chrome.browserAction.setBadgeBackgroundColor({color: '#3498db', tabId: tabId});
+			}
 		}
 		
 		if (tabId in connections) {

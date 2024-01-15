@@ -5,8 +5,7 @@
   "description": "Extension to inspect and configure Mojito experiments.",
   "manifest_version": 3,
   "permissions": [
-    "activeTab",
-    "storage"
+    "activeTab"
   ],
   "background": {
     "service_worker": "service_worker.js"

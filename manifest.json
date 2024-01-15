@@ -1,46 +1,58 @@
 {
-    "name": "Mojito Chrome Inspector",
-    "version": "0.9.4",
-    "version_name": "0.9.4",
-    "description": "Chrome extension to inspect and configure Mojito experiments.",
-    "manifest_version": 2,
-    "permissions": [
-        "http://*/*",
-        "https://*/*",
-        "activeTab"
-    ],
-    "background": {
-        "scripts": ["background.js"],
-        "persistent": false
-    },
-    "browser_action": {
-        "default_icon": {
-            "16": "images/logo-disabled.png",
-            "32": "images/logo-disabled.png",
-            "48": "images/logo-disabled.png",
-            "128": "images/logo-disabled.png"
-        },
-        "default_title": "Mojito Chrome Inspector",
-        "default_popup": "popups/popup-disabled.html"
-    },
-    "content_scripts": [
-        {
-            "matches": [
-              "<all_urls>"
-            ],
-            "js": [
-              "content.js"
-            ],
-            "run_at": "document_idle"
-        }
-    ],
-    "devtools_page": "devtools.html",
-    "web_accessible_resources": ["injected.js"],
-    "homepage_url": "https://mojito.mx/",
-    "icons": {
-        "16": "images/logo.png",
-        "32": "images/logo.png",
-        "48": "images/logo.png",
-        "128": "images/logo.png"
+  "name": "Mojito Inspector",
+  "version": "0.9.5",
+  "version_name": "0.9.5",
+  "description": "Extension to inspect and configure Mojito experiments.",
+  "manifest_version": 3,
+  "permissions": [
+    "activeTab",
+    "storage"
+  ],
+  "background": {
+    "service_worker": "service_worker.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "run_at": "document_idle"
     }
+  ],
+  "devtools_page": "devtools.html",
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "injected.js"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
+    }
+  ],
+  "homepage_url": "https://mojito.mx/",
+  "icons": {
+    "16": "images/logo.png",
+    "32": "images/logo.png",
+    "48": "images/logo.png",
+    "128": "images/logo.png"
+  },
+  "action": {
+    "default_icon": {
+      "16": "images/logo-disabled.png",
+      "32": "images/logo-disabled.png",
+      "48": "images/logo-disabled.png",
+      "128": "images/logo-disabled.png"
+    },
+    "default_title": "Mojito Chrome Inspector",
+    "default_popup": "popups/popup-disabled.html"
+  },
+  "content_security_policy": {},
+  "host_permissions": [
+    "http://*/*",
+    "https://*/*"
+  ]
 }

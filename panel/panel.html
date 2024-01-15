@@ -12,16 +12,21 @@
     <header>
         <div class="header">
             <div class="info">
-                <div class="staging">Staging<span id="stagingCnt"></span></div>
-                <div class="live">Live<span id="liveCnt"></span></div>
-                <div class="divert">Divert<span id="divertCnt"></span></div>
+                <div class="staging">Staging<span id="stagingCnt" class="count-num"></span></div>
+                <div class="live">Live<span id="liveCnt" class="count-num"></span></div>
+                <div class="divert">Divert<span id="divertCnt" class="count-num"></span></div>
+                <div class="container-info">
+                    <div>Mojito version: <span class="version"></span></div>
+                    <div>Last built: <span class="built-date"></span></div>
+                    <div>Container weight (minified/gzip): <span class="weight"></span></div>
+                </div>
             </div>
             <div class="links">
                 <div class="github">
                     <a class="mjt-green" href="https://github.com/mint-metrics/mojito" target="_blank">Github</a>
                 </div>
                 <div class="docs">
-                    <a class="mjt-green" href="https://mojito.mx" target="_blank"><span>Mojito docs</span></a>
+                    <a class="mjt-green" href="https://mojito.mx/?utm_source=mojito+inspector+extension&utm_medium=app&utm_campaign=console+header+link" target="_blank"><span>Mojito docs</span></a>
                 </div>
             </div>
         </div>
@@ -30,11 +35,8 @@
             <span id="clearFilter">&times</span>
         </div>
         <div class="grid-header">
-            <div class="col col-name" data-col-name="name">
+            <div class="col col-name" data-col-name="id">
                 <div class="label"><div class="sort-arrow"></div>Experiment</div>
-            </div>
-            <div class="col col-id" data-col-name="id">
-                <div class="label"><div class="sort-arrow"></div>ID</div>
             </div>
             <div class="col col-state" data-col-name="state">
                 <div class="label"><div class="sort-arrow"></div>State</div>
@@ -44,6 +46,9 @@
                 <div class="refresh-icon mjt-green">
                     Refresh page to apply changes
                 </div>
+            </div>
+            <div class="col col-size" data-col-name="size">
+                <div class="label"><div class="sort-arrow"></div>Raw size <span class="size"></span> (100%)</div>
             </div>
         </div>
     </header>

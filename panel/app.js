@@ -507,7 +507,7 @@ function applyChanges() {
     mojitoTracker('trackStructEvent', {
         category: 'Force recipe',
         action: buildData.pageHostname,
-        label: 'https://d1xafqim8ep2fx.cloudfront.net/js/' + buildData.container + '.js',
+        label: buildData.container,
         property: buildData.mojitoVersion
     });
 }
@@ -566,7 +566,7 @@ function showTrigger(testId) {
     mojitoTracker('trackStructEvent', {
         category: 'Trigger view',
         action: buildData.pageHostname,
-        label: 'https://d1xafqim8ep2fx.cloudfront.net/js/' + buildData.container + '.js',
+        label: buildData.container,
         property: buildData.mojitoVersion
     });
 }
@@ -599,7 +599,7 @@ function trackConsoleView () {
     mojitoTracker('trackStructEvent', {
         category: 'Console view',
         action: buildData.pageHostname,
-        label: 'https://d1xafqim8ep2fx.cloudfront.net/js/' + buildData.container + '.js',
+        label: buildData.container,
         property: buildData.mojitoVersion
     });
 }

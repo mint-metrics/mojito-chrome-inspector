@@ -44,7 +44,7 @@ if (params.mojitoVersion) {
 	mojitoTracker('trackStructEvent', {
 		category: 'Popup view',
 		action: params.pageHostname,
-		label: 'https://d1xafqim8ep2fx.cloudfront.net/js/' + params.containerName + '.js',
+		label: params.containerName,
 		property: params.mojitoVersion
 	});
 }

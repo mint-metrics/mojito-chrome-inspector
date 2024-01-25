@@ -1,7 +1,7 @@
 {
   "name": "Mojito Inspector",
-  "version": "0.9.5",
-  "version_name": "0.9.5",
+  "version": "0.9.7",
+  "version_name": "0.9.7",
   "description": "Extension to inspect and configure Mojito experiments.",
   "manifest_version": 3,
   "permissions": [
@@ -46,7 +46,7 @@
       "48": "images/logo-disabled.png",
       "128": "images/logo-disabled.png"
     },
-    "default_title": "Mojito Chrome Inspector",
+    "default_title": "Mojito Inspector",
     "default_popup": "popups/popup-disabled.html"
   },
   "content_security_policy": {},
